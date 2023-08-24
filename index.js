@@ -63,7 +63,7 @@ async function run() {
 
 
         // user api
-        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
+        app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result);
         })
@@ -92,16 +92,18 @@ async function run() {
         })
 
         // Cart post get
-        app.get('/carts', verifyJWT, async (req, res) => {
+        app.get('/carts', async (req, res) => {
             const email = req.query.email;
 
-            if (!email) { res.send([]); }
-            const decodedEmail = req.decoded.email;
-            if (email !== decodedEmail) {
-                return res.status(403).send({ error: true, massage: "forbidden access" })
+            if (!email) {
+                res.send([]);
             }
+
+
+
             const query = { email: email };
             const result = await cartCollection.find(query).toArray();
+
             res.send(result);
         });
         // admin check
