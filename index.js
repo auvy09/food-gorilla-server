@@ -75,6 +75,7 @@ async function run() {
 
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
+
             const filter = { _id: new ObjectId(id) };
             const updateDoc = {
                 $set: {
@@ -85,10 +86,28 @@ async function run() {
             res.send(result);
         })
         // Send a ping to confirm a successful connection
-
+        // menu
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
             res.send(result);
+        })
+        app.post('/menu', async (req, res) => {
+            const newItem = req.body;
+            const result = await menuCollection.insertOne(newItem)
+            res.send(result);
+        })
+
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const query = { _id: id }
+            console.log(query);
+            const ress = await menuCollection.findOne(query);
+            console.log(ress);
+            const result = await menuCollection.deleteOne(query);
+            console.log(result);
+            res.send(result);
+
         })
 
         // Cart post get
@@ -128,13 +147,22 @@ async function run() {
             const result = await cartCollection.insertOne(item);
             res.send(result);
         })
-
+        // cart delete
         app.delete('/carts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await cartCollection.deleteOne(query);
             res.send(result);
         })
+        // user delete
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+
+            const query = { _id: new ObjectId(id) }
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+        console.log("ffffff");
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
